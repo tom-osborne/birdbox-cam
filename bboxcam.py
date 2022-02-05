@@ -15,7 +15,7 @@ try:
   camera.framerate = 25 
   camera.vflip = True 
   camera.hflip = True 
-  camera.start_recording(stream.stdin, format='h264', bitrate = 2000000) 
+  camera.start_recording(stream_cmd.stdin, format='h264', bitrate = 2000000) 
   while True: 
      camera.wait_recording(1) 
 except KeyboardInterrupt: 

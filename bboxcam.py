@@ -4,8 +4,9 @@ import time
 
 print("Started BirdBox Cam v0.1")
 
-raspivid_cmd = 'raspivid -o - -t 0 -a "%d %B %Y %H:%M:%S" -a 1024 -ae 10,0x8080ff,0x00 -vf -hf -fps 30 -b 6000000'
-ffmpeg_cmd = 'ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128000 -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61'
+
+raspivid_cmd = 'raspivid -o - -t 0 -a "pi2cam %d %B %Y %H:%M:%S" -ae 24,0x00,0x8080ff -vf -hf -fps 30 -b 6000000'
+ffmpeg_cmd = 'ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -use_wallclock_as_timestamps 1 -acodec aac -ab 128000 -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61'
 stream_cmd = raspivid_cmd + ' | ' + ffmpeg_cmd
 
 # stream_cmd_video = "v4l2-ctl -d /dev/zero --set-ctrl=exposure_dynamic_framerate=1 --set-ctrl=scene_mode=8 -v width=1296,height=960,pixelformat=YU12 | "

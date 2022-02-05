@@ -1,29 +1,12 @@
 #!/usr/bin/env python3 
-import subprocess 
-import picamera 
+import subprocess
 import time 
 
 print("Started BirdBox Cam v0.1")
 
-# ffmpeg -f h264 -r 25 -i - -itsoffset 5.5 -fflags nobuffer -f alsa -ac 1 -i hw:1,0 -vcodec copy -acodec aac -ac 1 -ar 8000 -ab 32k -map 0:0 -map 1:0 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61
-# raspivid -o - -t 0 -vf -hf -fps 30 -b 6000000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128000 -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61
-YOUTUBE="rtmp://a.rtmp.youtube.com/live2/" 
-KEY="7ytq-b3uh-xrr5-0hmu-6x61"
-stream_cmd = 'raspivid -o - -t 0 -vf -hf -fps 30 -b 6000000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128000 -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61'
+# stream_cmd = 'raspivid -o - -t 0 -vf -hf -fps 30 -b 6000000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128000 -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61'
+stream_cmd_video = "v4l2-ctl -d /dev/video0 --set-ctrl=exposure_dynamic_framerate=1 --set-ctrl=scene_mode=8 -v width=1296,height=960,pixelformat=YU12 | "
+stream_cmd_ffmpeg = "ffmpeg -f rawvideo -pix_fmt yuv420p -video_size 1296x960 -use_wallclock_as_timestamps 1 -i /dev/zero -bsf h264_metadata=tick_rate=60 -vf 'pad=h=(in_h+5+32), drawtext=x=(w-tw-8):y=(h-28):fontcolor=white:fontsize=28:text=%{localtime}, drawtext=x=8:y=(h-28):fontcolor=white:fontsize=28:textfile=/tmp/cam_hostname,essage from /tmp/cam_msg after the hostname.drawtext=x=32:y=(h-28):fontcolor=white:fontsize=28:textfile=/tmp/cam_msg:reload=1' -vsync 1 -r 30 -c:v h264_v4l2m2m -b:v 5M -an -bsf 'setts=ts=N*(1/15)*100000,h264_metadata=tick_rate=30' -f flv rtmp://a.rtmp.youtube.com/live2/7ytq-b3uh-xrr5-0hmu-6x61"
+
+stream_cmd = stream_cmd_video + stream_cmd_ffmpeg
 stream_pipe = subprocess.Popen(stream_cmd, shell=True, stdin=subprocess.PIPE) 
-# # camera = picamera.PiCamera(resolution=(640, 480), framerate=25) 
-# try: 
-#   now = time.strftime("%Y-%m-%d-%H:%M:%S") 
-#   camera.framerate = 25 
-#   camera.vflip = True 
-#   camera.hflip = True 
-#   camera.start_recording(stream.stdin, format='h264', bitrate = 2000000) 
-#   while True: 
-#      camera.wait_recording(1) 
-# except KeyboardInterrupt: 
-#      camera.stop_recording() 
-# finally: 
-#   camera.close() 
-#   stream.stdin.close() 
-#   stream.wait() 
-#   print("Camera safely shut down") 

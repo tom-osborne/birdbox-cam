@@ -1,0 +1,1 @@
+print("Started BirdBox Cam v0.1")

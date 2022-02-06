@@ -7,5 +7,3 @@ sleep 5
 cd home/pi/birdbox-cam/
 sudo python main.py
 cd /
-
-

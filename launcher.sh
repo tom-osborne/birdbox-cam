@@ -7,7 +7,7 @@ vncserver
 
 sleep 5
 
-# raspivid -o - -t 0 -vf -fps 30 -b 6000000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm
+# raspivid -o - -t 0 -n -vf -fps 30 -b 6000000 | ffmpeg -re -ar 44100 -ac 2 -acodec pcm
 cd /home/pi/birdbox-cam/
 sudo python main.py
 cd /

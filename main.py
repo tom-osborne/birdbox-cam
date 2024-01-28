@@ -5,7 +5,7 @@ import config
 
 print("Started BirdBox Cam v0.1")
 
-raspivid_cmd = 'raspivid -o - -t 0 -a 1036 -a "%Y-%m-%d %H:%M:%S" -n -fps 25 -b 4500000'
+raspivid_cmd = 'raspivid -o - -t 0 -a 1036 -a "%Y-%m-%d %H:%M:%S" -n -fps 25 -b 4500000 -br 60'
 ffmpeg_cmd = f"ffmpeg -re -ar 44100 -ac 2 -acodec pcm_s16le -f s16le -ac 2 -i /dev/zero -f h264 -i - -vcodec copy -acodec aac -ab 128k -g 50 -strict experimental -f flv rtmp://a.rtmp.youtube.com/live2/{config.STREAM_KEY} -use_wallclock_as_timestamps 1"
 stream_cmd = raspivid_cmd + ' | ' + ffmpeg_cmd
 
